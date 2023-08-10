@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import postApi from "../../service/posts";
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 const index = () => {
   const [post, setPost] = useState([]);
@@ -13,19 +14,24 @@ const index = () => {
     const newPost = {
       title: title,
       description: description,
-      id: uuidv4()
+      id: uuidv4(),
     };
-    if(newPost.title.trim().length === 0 || newPost.description.trim().length === 0) {
-      alert("Please fill all the fields");
-    } else{
+    if (
+      newPost.title.trim().length === 0 ||
+      newPost.description.trim().length === 0
+    ) {
+      toast.info("Please fill all the fields", {autoClose: 1000});
+    } else {
+      toast.success(`Post created successfully`, {autoClose: 1000});
       postApi.createPost(newPost);
       setTitle("");
       setDescription("");
     }
+    location.reload(); // postlarni qo'shish uchun
     getPosts();
-  }
+  };
 
-  function getPosts () {
+  function getPosts() {
     postApi
       .getPost()
       .then((response) => {
@@ -40,10 +46,11 @@ const index = () => {
 
   useEffect(() => {
     getPosts();
-  }, [addPost]);
+  }, []);
 
   return (
-    <div className="border border-dashed border-cyan-600 p-5 bg-slate-100 h-screen">
+    <div className="border border-dashed border-cyan-600 p-5 bg-slate-100">
+      <ToastContainer/>
       <button
         onClick={() => setToggleEditor(!toggleEditor)}
         className="bg-teal-600 px-3 py-2 rounded-lg focus:ring-4 w-32 text-center text-white font-semibold mb-4"
@@ -72,7 +79,10 @@ const index = () => {
           className="my-3 border p-3"
         ></textarea>
 
-        <button onClick={() => addPost()} className="bg-green-600 px-3 py-2 rounded-lg focus:ring-4 w-32 text-center text-white font-semibold mb-4">
+        <button
+          onClick={() => addPost()}
+          className="bg-green-600 px-3 py-2 rounded-lg focus:ring-4 w-32 text-center text-white font-semibold mb-4"
+        >
           Add post
         </button>
       </div>
@@ -86,13 +96,12 @@ const index = () => {
                 <li>
                   <Link
                     to={`/posts/${e.id}`}
+                    d
                     className="p-4 block bg-green-100 border mt-5"
                   >
                     <strong className="block">{e.title}</strong>
                     <p>{e.description}</p>
                   </Link>
-
-                  
                 </li>
               </>
             );

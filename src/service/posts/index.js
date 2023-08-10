@@ -6,10 +6,16 @@ const postApi = {
         return axios.get("/posts");
     },
     createPost: function (data) {
-        axios.post("/posts", data)
+        axios.post("/posts", data);
     },
     getpostItem: async function (id) {
-        return axios.get(`/posts/${id}`)
+        return axios.get(`/posts/${id}`);
+    },
+    updatePost:function(id, data){
+        axios.patch(`/posts/${id}`, data);
+    },
+    deletePost : function (id) {
+        axios.delete(`/posts/${id}`);
     }
 }
 
